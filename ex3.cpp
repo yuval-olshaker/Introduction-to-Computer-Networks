@@ -3,6 +3,8 @@
 //
 #include <iostream>
 #include <vector>
+#include <cmath>
+
 using namespace std;
 
 
@@ -11,7 +13,7 @@ vector<double> get_times(double T, double lambda){
     double a0 = 0.0; /* a convention */
     as.emplace_back(a0);
     while(as[as.size()-1] < T) {
-        as.emplace_back(as[as.size()-1] + Exponential(1 / λ));
+        as.emplace_back(as[as.size()-1] + exp(1 / lambda));
     }
     return as;
 }
@@ -41,9 +43,9 @@ int main (int argc, char *argv[]) {
         Y++;
         queue.emplace_back(arrivel_times[i]);
         if (finish_times.empty()){
-            finish_times.emplace_back(arrivel_times[i] + Exponential(1 / miu));
+            finish_times.emplace_back(arrivel_times[i] + exp(1 / miu));
         } else {
-            finish_times.emplace_back(finish_times[finish_times.size() - 1] + Exponential(1 / miu));
+            finish_times.emplace_back(finish_times[finish_times.size() - 1] + exp(1 / miu));
         }
 
         amounts.emplace_back(make_pair(queue.size(),arrivel_times[i]));
