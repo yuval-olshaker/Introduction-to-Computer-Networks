@@ -114,8 +114,8 @@ int main (int argc, char *argv[]) {
             }
         }
     }
-    cout << X << " ";
     cout << Y << " ";
+    cout << X << " ";
     cout << T_tag << " ";
     vector<double> times;
     for (int i = 0 ; i < argc - 4; i++){
