@@ -27,11 +27,12 @@ int main (int argc, char *argv[]) {
 
     vector<double> arrivel_times = get_times(double T, double lambda);
     vector<double> queue;
+    vector<double> finish_times;
     vector<pair<int,double>> amounts;
     X = 0;
     Y = 0;
     for (int i = 0 ; i < arrivel_times.size() ; i++){
-        amounts.push_back(make_pair(queue.size(),arrivel_times[i]));
+        amounts.push_back(make_pair(queue.size(), arrivel_times[i]));
         pi = ps[queue.size()];
         if ((double) rand()/RAND_MAX > pi){
             X++;
@@ -39,11 +40,37 @@ int main (int argc, char *argv[]) {
         }
         Y++;
         queue.push_back(arrivel_times[i]);
-        amounts.push_back(make_pair(queue.size(),arrivel_times[i]))
-        // moving out from queue
-        if (1 > 0){
-            int a = 5;
+        if (finish_times.size() == 0){
+            finish_times.push_back(arrivel_times[i] + Exponential(1 / miu));
+        } else {
+            finish_times.push_back(finish_times[finish_times.size() - 1] + Exponential(1 / miu));
         }
+
+        amounts.push_back(make_pair(queue.size(),arrivel_times[i]));
+        // deal with finish packets
+        if (i+1 == arrivel_times.size()){ // if last packet we finish with all
+            for each (double* time in finish_times){
+                queue.erase(queue.begin());
+                finish_times.erase(finish_times.begin());
+                amounts.push_back(make_pair(queue.size(), time));
+            }
+        }
+        else { // if has move packets then we will find the last one that will finish
+                // process before the next packet arrives and process all the packets to it
+            max = 0;
+            for (int j =0; j < finish_times.size(); j++){
+                if (finish_times[j] > arrivel_times[i+1]) {
+                    break;
+                }
+                max = j;
+            }
+            for (int j =0; j <= max; j++){
+                queue.erase(queue.begin());
+                finish_times.erase(finish_times.begin());
+                amounts.push_back(make_pair(queue.size(), time));
+            }
+        }
+
 
     }
 }
