@@ -4,21 +4,30 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <time.h>
 
 using namespace std;
 
+double zero_to_one_random(){
+    return (double) rand()/RAND_MAX;
+}
+
+double distribution(double param){
+    return -1 * log(zero_to_one_random()) / param;
+}
 
 vector<double> get_times(double T, double lambda){
     vector <double> as;
     double a0 = 0.0; /* a convention */
     as.emplace_back(a0);
     while(as[as.size()-1] < T) {
-        as.emplace_back(as[as.size()-1] + exp(1 / lambda));
+        as.emplace_back(as[as.size()-1] + distribution(lambda));
     }
     return as;
 }
 
 int main (int argc, char *argv[]) {
+    srand (time(nullptr));
     double T = stod(argv[1], nullptr);
     double lambda = stod(argv[2], nullptr);
     double miu = stod(argv[3], nullptr);
@@ -33,20 +42,18 @@ int main (int argc, char *argv[]) {
     vector<pair<int,double>> amounts;
     int X = 0;
     int Y = 0;
-    cout << " arrivel_times.size() " << arrivel_times.size() << endl;
     for (int i = 0 ; i < arrivel_times.size() ; i++){
-        cout << " i " << i << endl;
         amounts.emplace_back(make_pair(queue.size(), arrivel_times[i]));
         double pi = ps[queue.size()];
-        if ((double) rand()/RAND_MAX > pi){
+        if (zero_to_one_random() > pi){
             X++;
         } else {
             Y++;
             queue.emplace_back(arrivel_times[i]);
             if (finish_times.empty()){
-                finish_times.emplace_back(arrivel_times[i] + exp(1 / miu));
+                finish_times.emplace_back(arrivel_times[i] + distribution(miu));
             } else {
-                finish_times.emplace_back(finish_times[finish_times.size() - 1] + exp(1 / miu));
+                finish_times.emplace_back(finish_times[finish_times.size() - 1] + distribution(miu));
             }
 
             amounts.emplace_back(make_pair(queue.size(),arrivel_times[i]));
@@ -70,8 +77,6 @@ int main (int argc, char *argv[]) {
                 }
                 max = j;
             }
-            cout << "max" << endl;
-            cout << max << endl;
             for (int j =0; j <= max; j++){
                 double time = finish_times[0];
                 queue.erase(queue.begin());
@@ -80,8 +85,8 @@ int main (int argc, char *argv[]) {
             }
         }
     }
-    cout << X << endl;
-    cout << Y << endl;
+    cout << "X" << X << endl;
+    cout << "Y" << Y << endl;
 }
 
 
