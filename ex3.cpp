@@ -33,22 +33,24 @@ int main (int argc, char *argv[]) {
     vector<pair<int,double>> amounts;
     int X = 0;
     int Y = 0;
+    cout << " arrivel_times.size() " << arrivel_times.size() << endl;
     for (int i = 0 ; i < arrivel_times.size() ; i++){
+        cout << " i " << i << endl;
         amounts.emplace_back(make_pair(queue.size(), arrivel_times[i]));
         double pi = ps[queue.size()];
         if ((double) rand()/RAND_MAX > pi){
             X++;
-            continue;
-        }
-        Y++;
-        queue.emplace_back(arrivel_times[i]);
-        if (finish_times.empty()){
-            finish_times.emplace_back(arrivel_times[i] + exp(1 / miu));
         } else {
-            finish_times.emplace_back(finish_times[finish_times.size() - 1] + exp(1 / miu));
-        }
+            Y++;
+            queue.emplace_back(arrivel_times[i]);
+            if (finish_times.empty()){
+                finish_times.emplace_back(arrivel_times[i] + exp(1 / miu));
+            } else {
+                finish_times.emplace_back(finish_times[finish_times.size() - 1] + exp(1 / miu));
+            }
 
-        amounts.emplace_back(make_pair(queue.size(),arrivel_times[i]));
+            amounts.emplace_back(make_pair(queue.size(),arrivel_times[i]));
+        }
         // deal with finish packets
         if (i+1 == arrivel_times.size()){ // if last packet we finish with all
             int len = finish_times.size();
@@ -61,13 +63,15 @@ int main (int argc, char *argv[]) {
         }
         else { // if has move packets then we will find the last one that will finish
                 // process before the next packet arrives and process all the packets to it
-            int max = 0;
+            int max = -1;
             for (int j =0; j < finish_times.size(); j++){
                 if (finish_times[j] > arrivel_times[i+1]) {
                     break;
                 }
                 max = j;
             }
+            cout << "max" << endl;
+            cout << max << endl;
             for (int j =0; j <= max; j++){
                 double time = finish_times[0];
                 queue.erase(queue.begin());
