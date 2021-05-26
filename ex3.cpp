@@ -19,12 +19,12 @@ vector<double> get_times(double T, double lambda){
 }
 
 int main (int argc, char *argv[]) {
-    double T = stod(argv[0]);
-    double lambda = stod(argv[1]);
-    double miu = stod(argv[2]);
+    double T = stod(argv[1], nullptr);
+    double lambda = stod(argv[2], nullptr);
+    double miu = stod(argv[3], nullptr);
     vector<double> ps;
-    for (int i = 3 ; i < argc; i++){
-        ps.emplace_back(stod(argv[i]));
+    for (int i = 4 ; i < argc; i++){
+        ps.emplace_back(stod(argv[i], nullptr));
     }
 
     vector<double> arrivel_times = get_times(T, lambda);
@@ -75,9 +75,9 @@ int main (int argc, char *argv[]) {
                 amounts.emplace_back(make_pair(queue.size(), time));
             }
         }
-
-
     }
+    cout << X << endl;
+    cout << Y << endl;
 }
 
 
