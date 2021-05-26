@@ -8,10 +8,10 @@ using namespace std;
 
 vector<double> get_times(double T, double lambda){
     vector <double> as;
-    a0 = 0.0; /* a convention */
-    as.push_back(a0);
+    double a0 = 0.0; /* a convention */
+    as.emplace_back(a0);
     while(as[as.size()-1] < T) {
-        as.push_back(as[as.size()-1] + Exponential(1 / λ));
+        as.emplace_back(as[as.size()-1] + Exponential(1 / λ));
     }
     return as;
 }
@@ -22,42 +22,44 @@ int main (int argc, char *argv[]) {
     double miu = stod(argv[2]);
     vector<double> ps;
     for (int i = 3 ; i < argc; i++){
-        ps.push_back(stod(argv[i]));
+        ps.emplace_back(stod(argv[i]));
     }
 
-    vector<double> arrivel_times = get_times(double T, double lambda);
+    vector<double> arrivel_times = get_times(T, lambda);
     vector<double> queue;
     vector<double> finish_times;
     vector<pair<int,double>> amounts;
-    X = 0;
-    Y = 0;
+    int X = 0;
+    int Y = 0;
     for (int i = 0 ; i < arrivel_times.size() ; i++){
-        amounts.push_back(make_pair(queue.size(), arrivel_times[i]));
-        pi = ps[queue.size()];
+        amounts.emplace_back(make_pair(queue.size(), arrivel_times[i]));
+        double pi = ps[queue.size()];
         if ((double) rand()/RAND_MAX > pi){
             X++;
             continue;
         }
         Y++;
-        queue.push_back(arrivel_times[i]);
-        if (finish_times.size() == 0){
-            finish_times.push_back(arrivel_times[i] + Exponential(1 / miu));
+        queue.emplace_back(arrivel_times[i]);
+        if (finish_times.empty()){
+            finish_times.emplace_back(arrivel_times[i] + Exponential(1 / miu));
         } else {
-            finish_times.push_back(finish_times[finish_times.size() - 1] + Exponential(1 / miu));
+            finish_times.emplace_back(finish_times[finish_times.size() - 1] + Exponential(1 / miu));
         }
 
-        amounts.push_back(make_pair(queue.size(),arrivel_times[i]));
+        amounts.emplace_back(make_pair(queue.size(),arrivel_times[i]));
         // deal with finish packets
         if (i+1 == arrivel_times.size()){ // if last packet we finish with all
-            for each (double* time in finish_times){
+            int len = finish_times.size();
+            for (int k = 0; k < len; k++) {
+                double time = finish_times[0];
                 queue.erase(queue.begin());
                 finish_times.erase(finish_times.begin());
-                amounts.push_back(make_pair(queue.size(), time));
+                amounts.emplace_back(make_pair(queue.size(), time));
             }
         }
         else { // if has move packets then we will find the last one that will finish
                 // process before the next packet arrives and process all the packets to it
-            max = 0;
+            int max = 0;
             for (int j =0; j < finish_times.size(); j++){
                 if (finish_times[j] > arrivel_times[i+1]) {
                     break;
@@ -65,9 +67,10 @@ int main (int argc, char *argv[]) {
                 max = j;
             }
             for (int j =0; j <= max; j++){
+                double time = finish_times[0];
                 queue.erase(queue.begin());
                 finish_times.erase(finish_times.begin());
-                amounts.push_back(make_pair(queue.size(), time));
+                amounts.emplace_back(make_pair(queue.size(), time));
             }
         }
 
